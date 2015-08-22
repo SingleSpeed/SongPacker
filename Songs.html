@@ -7838,12 +7838,11 @@
     }];
 
 
-        SongRenderer = function(songs, elem, columnHeight, columnWidth) {
+        SongRenderer = function(songs, elem, columnHeight) {
             this.packedSongs = [];
             this.songs = songs;
             this.containerDiv = elem;
             this.columnHeight = columnHeight;
-            this.columnWidth = columnWidth;
         }
         SongRenderer.prototype = {
 
@@ -7951,13 +7950,13 @@
         $(function () {
 		
 			var front = $(songs).filter(function (i,n){return n.source === 'Front'});
-            var songRendererFront = new SongRenderer(front, $('.songHolderFront'), 792, 100);
+            var songRendererFront = new SongRenderer(front, $('.songHolderFront'), 792);
 			songRendererFront.addSongHeight();
 			songRendererFront.pack();
             songRendererFront.print();
 			
 			var back = $(songs).filter(function (i,n){return n.source === 'Back' || n.source === 'Addendum'});
-            var songRendererBack = new SongRenderer(back, $('.songHolderBack'), 792, 100);
+            var songRendererBack = new SongRenderer(back, $('.songHolderBack'), 792);
 			songRendererBack.addSongHeight();
 			songRendererBack.pack();
             songRendererBack.print();
