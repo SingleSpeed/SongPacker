@@ -7,8 +7,8 @@
 
     <style type="text/css">
         h1 { font: bold 14px helvetica; margin: 0px 0px 0px 30px; }
-        h2 { font: italic 12px helvetica; margin: 0px 0px 0px 30px; }
-        p { font: 12px helvetica; margin: 10px 0px 0px 30px; }
+        h2 { font: italic 12px helvetica; margin: 0px 0px 10px 30px; }
+        p { font: 12px helvetica; margin: 0px 0px 0px 30px; padding-left: 2em; text-indent: -2em; }
         .column { float: left; margin-right: 20px; width: 47%; }
         .first { clear: both; }
         .song { margin-bottom: 20px; }
@@ -7949,7 +7949,7 @@
             },
     
             createSongHTML : function(song) {
-                return "<div class=\"song\"><span class=\"number\">"+((song.ordinal != undefined) ? song.ordinal : 0) +"</span><h1>"+song.title+"</h1><h2>"+song.author+"</h2><p>"+song.content.replace(/\n/g,'<br />').replace( /(\d{1}\.{1})/g, '<span>$1</span>' )+"</p></div>";
+                return "<div class=\"song\"><span class=\"number\">"+((song.ordinal != undefined) ? song.ordinal : 0) +"</span><h1>"+song.title+"</h1><h2>"+song.author+"</h2><p>"+song.content.replace(/\n\n/g,'</p><p>&nbsp;</p><p>').replace(/\n/g,'</p><p>').replace( /(\d{1}\.{1})/g, '<span>$1</span>' )+"</p></div>";
             },
     
         }
