@@ -7861,9 +7861,15 @@
                     //for(var i = this.songs.length -1; i > 0 ; i--) {
 					
                         var song = this.songs[i];
+
+						// Need to handle songs that are > PAGE_HEIGHT_IN_PIXELS
+						if(song != null && (song.height > this.columnHeight)) {
+							console.log("Song didn't fit:" + song.id );
+							 this.songs.splice(i, 1);
+							 this.packInternal(ordinal, columnCount, currentColumnSize); // done, start over
+						}
 						
 						// Just add the first one to a new column
-						// Need to handle songs that are > PAGE_HEIGHT_IN_PIXELS
                         if(currentColumnSize == this.columnHeight && song.height <= currentColumnSize) {
 							this.addSongToPackedSongs(song, ordinal, columnCount);
                             this.songs.splice(i, 1);
@@ -7953,13 +7959,13 @@
 		
 			var front = $(masterSongList).filter(function (i,n){return n.source === 'Front'});
 			var numberOfSongsInFront = front.length;
-            var songRendererFront = new SongRenderer(front, $('.songHolderFront'), 792, 1);
+            var songRendererFront = new SongRenderer(front, $('.songHolderFront'), 720, 1);
 			songRendererFront.addSongHeight();
 			songRendererFront.pack();
             songRendererFront.print();
 			
 			var back = $(masterSongList).filter(function (i,n){return n.source === 'Back' || n.source === 'Addendum'});
-            var songRendererBack = new SongRenderer(back, $('.songHolderBack'), 792, numberOfSongsInFront + 1);
+            var songRendererBack = new SongRenderer(back, $('.songHolderBack'), 720, numberOfSongsInFront + 1);
 			songRendererBack.addSongHeight();
 			songRendererBack.pack();
             songRendererBack.print();
