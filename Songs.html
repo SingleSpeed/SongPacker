@@ -7883,7 +7883,7 @@
 							if(this.songs[j].fit <= 0) {
 								var songThatFits = this.songs[j];
 								this.addSongToPackedSongs(songThatFits, ordinal, columnCount);
-								this.songs.splice(i, 1);
+								this.songs.splice(j, 1);
 								ordinal++;
 								currentColumnSize = currentColumnSize - songThatFits.height;
 								this.packInternal(ordinal, columnCount, currentColumnSize); // done, start over
