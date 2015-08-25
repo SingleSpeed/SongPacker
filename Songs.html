@@ -131,7 +131,7 @@
 						songHTML = songHTML + song.songHTML;
 						if(song.lastSongInColumn) {
 							if(song.columnCount % 2) {
-								songHTML = songHTML + "</div></div><div class=\"page\"><div class=\"column first\" style=\"page-break-before: always;\">";
+								songHTML = songHTML + "</div></div><div class=\"page\"><div class=\"column first\">";
 							}
 							else {
 								songHTML = songHTML + "</div><div class=\"column\">";
@@ -144,21 +144,37 @@
 				
 				createIndex: function (){
 					this.options.packedSongs = this.sortJSON(this.options.packedSongs, 'title', 'asc');
+					this.options.containerDiv.html("<ul><li><span>"+this.options.packedSongs[0].title+"</span><span>"+this.options.packedSongs.ordinal+"</span></li></ul>");
+					var heightOfOneIndex = this.options.containerDiv.height();
+					var numberPerColumn = this.options.columnHeight / heightOfOneIndex;
 					var indexHTML = "<div class=\"page\"><div class=\"column first\"><ul class=\"index\">";
+					var indexColumnCount = 0;
+					
 					for(var k = 0; k < this.options.packedSongs.length ; k++) {
 						var song = this.options.packedSongs[k];
 						indexHTML = indexHTML + "<li><span>"+song.title+"</span><span>"+song.ordinal+"</span></li>";
+						if((k+1) % numberPerColumn == 0) { 
+							if(indexColumnCount % 2) {
+								indexHTML = indexHTML + "</ul></div></div><div class=\"page\"><div class=\"column first\"><ul class=\"index\">"; 
+							}
+							else {
+								indexHTML = indexHTML + "</ul></div><div class=\"column\"><ul class=\"index\">"; 
+							}
+							indexColumnCount++;
+						}
 					}
+					
 					indexHTML = indexHTML + "</ul></div></div>";
-					return indexHTML;
+					this.options.containerDiv.html(indexHTML);
 				},
 				
 			});	
 		})(jQuery);
 	
 	
+	
 		$(function () {
-			//TODO: passing in just one song throws an error
+			
 			
 			var front = $(masterSongList).filter(function (i,n){return n.source === 'Front'});
 			var back = $(masterSongList).filter(function (i,n){return n.source === 'Back' || n.source === 'Addendum'});
@@ -173,7 +189,7 @@
 				songs: front
 			});
 			songRendererFront.pack();
-			//songRendererFront.print();
+			songRendererFront.print();
 			
 			
 			// back
@@ -184,37 +200,21 @@
 				songs: back
 			});
 			songRendererBack.pack();
-			//songRendererBack.print();
+			songRendererBack.print();
 			
 			
 			// index
 			var songRendererForIndex = $.SongRenderer({
-				indexDiv: $('.songHolderIndex'),
+				columnHeight: 720,
+				containerDiv: $('.songHolderIndex'),
 				packedSongs: songRendererFront.options.packedSongs.concat(songRendererBack.options.packedSongs)
 			});
 			songRendererForIndex.createIndex();
-$('.songHolderIndex').html(songRendererForIndex.createIndex());
 
-			debugger;
+			
 		});
 
 	
-		
-        $(function () {
-		
-			/*var front = $(masterSongList).filter(function (i,n){return n.source === 'Front'});
-			var numberOfSongsInFront = front.length;
-            var songRendererFront = new SongRenderer(front, $('.songHolderFront'), 792, 1);
-			songRendererFront.addSongHeight();
-			songRendererFront.pack();
-            songRendererFront.print();
-			
-			var back = $(masterSongList).filter(function (i,n){return n.source === 'Back' || n.source === 'Addendum'});
-            var songRendererBack = new SongRenderer(back, $('.songHolderBack'), 792, numberOfSongsInFront + 1);
-			songRendererBack.addSongHeight();
-			songRendererBack.pack();
-            songRendererBack.print();*/
-        });
 	
 	
         var masterSongList = [
