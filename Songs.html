@@ -6,6 +6,7 @@
     <title>Songs</title> 
 
     <style type="text/css">
+		/*body { background-color: #222; }*/
         h1 { font: bold 14px helvetica; margin: 0px 0px 0px 30px; }
         h2 { font: italic 12px helvetica; margin: 0px 0px 0px 30px; }
         p { font: 12px helvetica; margin: 10px 0px 0px 30px; }
@@ -16,12 +17,206 @@
         .number { font: bold 14px helvetica; float: left; }
 		.page { content: ""; display: table; clear: both; page-break-after: always; width: 670px; }
 		.page { border-bottom: 1px solid #000; }		/*JUST FOR DEV*/
+		
+		ul.index { max-width: 40em; padding: 0; overflow-x: hidden; list-style: none; }
+		ul.index li { font: 12px helvetica; }
+		ul.index li:before { float: left; width: 0; white-space: nowrap; content: ". . . . . . . . . . . . . . . . . . . . " ". . . . . . . . . . . . . . . . . . . . "; }
+		ul.index span:first-child { padding-right: 0.33em;  }
+		ul.index span + span { float: right; padding-left: 0.33em; }
     </style>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 
     <script type="text/javascript">
 
+		(function ($) {
+			var sr = function (options) {
+				this.options = $.extend({
+					'columnHeight': 792,
+					'startingNumber': 1,
+					'containerDiv': document.createElement('div'),
+					'songs': [],
+					'packedSongs' : []
+				}, options);
+			};
+			$.SongRenderer = function (options) {
+				return new sr(options);
+			};
+			$.extend(sr.prototype, {
+						
+				addSongHeight : function (){
+					for(var i = 0; i < this.options.songs.length ; i++) {
+						this.options.songs[i].height = this.getSongHeight(this.options.songs[i]);
+					}
+				},
+				
+				getSongHeight : function(song) {
+					this.options.containerDiv.html(this.createSongHTML(song));
+					return  this.options.containerDiv.height();
+				},
+				
+				createSongHTML : function(song) {
+					return "<div class=\"song\"><span class=\"number\">"+((song.ordinal != undefined) ? song.ordinal : 0) +"</span><h1>"+song.title+"</h1><h2>"+song.author+"</h2><p>"+song.content.replace(/\n/g,'<br />').replace( /(\d{1}\.{1})/g, '<span>$1</span>' )+"</p></div>";
+				},
+				
+				pack: function() {
+					// before we can pack we need the song height
+					this.addSongHeight();
+					this._packInternal(this.options.startingNumber, 0, this.options.columnHeight);
+				},
+				
+				_packInternal: function(ordinal, columnCount, currentColumnSize) {
+
+					if(this.options.songs.length > 0) {
+											
+						for(var i = this.options.songs.length -1; i >= 0 ; i--) {
+						
+							var song = this.options.songs[i];
+							
+							if(song != null && (song.height > this.options.columnHeight)) {
+								console.log("Song doesn't fit: " + song.id);
+								this.options.songs.splice(i, 1);
+								this._packInternal(ordinal, columnCount, currentColumnSize);
+							}
+							
+							if(currentColumnSize == this.options.columnHeight && song.height <= currentColumnSize) {
+								song.ordinal = ordinal;
+								this.addSongToPackedSongs(song, columnCount);
+								this.options.songs.splice(i, 1);
+								ordinal++;
+								currentColumnSize = currentColumnSize - song.height;
+								this._packInternal(ordinal, columnCount, currentColumnSize);
+							}
+							
+							for(var j = 0; j < this.options.songs.length ; j++) {
+								this.options.songs[j].fit = this.options.songs[j].height - currentColumnSize;
+							}
+							
+							this.options.songs = this.sortJSON(this.options.songs, 'fit', 'desc');
+
+							for(var j = 0; j < this.options.songs.length ; j++) {
+								if(this.options.songs[j].fit <= 0) {
+									var songThatFits = this.options.songs[j];
+									songThatFits.ordinal = ordinal;
+									this.addSongToPackedSongs(songThatFits, columnCount);
+									this.options.songs.splice(j, 1);
+									ordinal++;
+									currentColumnSize = currentColumnSize - songThatFits.height;
+									this._packInternal(ordinal, columnCount, currentColumnSize); 
+								}
+							}
+
+							this.options.packedSongs[this.options.packedSongs.length - 1].lastSongInColumn = true;
+							columnCount++;
+							this._packInternal(ordinal, columnCount, this.options.columnHeight);
+						}
+					}
+				},
+				
+				sortJSON: function (data, key, dir){
+					return data.sort(function (a, b) {
+						if (dir == 'asc') return (a[key] > b[key]) ? 1 : ((a[key] < b[key]) ? -1 : 0);
+						else return (b[key] > a[key]) ? 1 : ((b[key] < a[key]) ? -1 : 0);
+					});
+				},
+				
+				addSongToPackedSongs: function (song, columnCount){
+					this.options.packedSongs.push( { "id": song.id, "source": song.source, "number": song.number, "title": song.title, "author": song.author, "content": song.content, "copyright": song.copyright, "height":song.height, "ordinal": song.ordinal, "columnCount": columnCount, "songHTML": this.createSongHTML(song) } );
+				},
+				
+				print: function (){
+					var songHTML = "<div class=\"page\"><div class=\"column first\">";
+					for(var i = 0; i < this.options.packedSongs.length ; i++) {
+						var song = this.options.packedSongs[i];
+						songHTML = songHTML + song.songHTML;
+						if(song.lastSongInColumn) {
+							if(song.columnCount % 2) {
+								songHTML = songHTML + "</div></div><div class=\"page\"><div class=\"column first\" style=\"page-break-before: always;\">";
+							}
+							else {
+								songHTML = songHTML + "</div><div class=\"column\">";
+							}
+						}
+					}
+					songHTML = songHTML.replace(new RegExp('<div class=\"column\">$'), '').replace(new RegExp('<div class=\"column first\">$'), '');
+					this.options.containerDiv.html(songHTML);
+				},
+				
+				createIndex: function (){
+					this.options.packedSongs = this.sortJSON(this.options.packedSongs, 'title', 'asc');
+					var indexHTML = "<div class=\"page\"><div class=\"column first\"><ul class=\"index\">";
+					for(var k = 0; k < this.options.packedSongs.length ; k++) {
+						var song = this.options.packedSongs[k];
+						indexHTML = indexHTML + "<li><span>"+song.title+"</span><span>"+song.ordinal+"</span></li>";
+					}
+					indexHTML = indexHTML + "</ul></div></div>";
+					return indexHTML;
+				},
+				
+			});	
+		})(jQuery);
+	
+	
+		$(function () {
+			//TODO: passing in just one song throws an error
+			
+			var front = $(masterSongList).filter(function (i,n){return n.source === 'Front'});
+			var back = $(masterSongList).filter(function (i,n){return n.source === 'Back' || n.source === 'Addendum'});
+			var frontLength = front.length;
+		
+		
+			// front
+			var songRendererFront = $.SongRenderer({
+				columnHeight: 720,
+				startingNumber: 1,
+				containerDiv: $('.songHolderFront'),
+				songs: front
+			});
+			songRendererFront.pack();
+			//songRendererFront.print();
+			
+			
+			// back
+			var songRendererBack = $.SongRenderer({
+				columnHeight: 720,
+				startingNumber: frontLength + 1,
+				containerDiv: $('.songHolderBack'),
+				songs: back
+			});
+			songRendererBack.pack();
+			//songRendererBack.print();
+			
+			
+			// index
+			var songRendererForIndex = $.SongRenderer({
+				indexDiv: $('.songHolderIndex'),
+				packedSongs: songRendererFront.options.packedSongs.concat(songRendererBack.options.packedSongs)
+			});
+			songRendererForIndex.createIndex();
+$('.songHolderIndex').html(songRendererForIndex.createIndex());
+
+			debugger;
+		});
+
+	
+		
+        $(function () {
+		
+			/*var front = $(masterSongList).filter(function (i,n){return n.source === 'Front'});
+			var numberOfSongsInFront = front.length;
+            var songRendererFront = new SongRenderer(front, $('.songHolderFront'), 792, 1);
+			songRendererFront.addSongHeight();
+			songRendererFront.pack();
+            songRendererFront.print();
+			
+			var back = $(masterSongList).filter(function (i,n){return n.source === 'Back' || n.source === 'Addendum'});
+            var songRendererBack = new SongRenderer(back, $('.songHolderBack'), 792, numberOfSongsInFront + 1);
+			songRendererBack.addSongHeight();
+			songRendererBack.pack();
+            songRendererBack.print();*/
+        });
+	
+	
         var masterSongList = [
     {
         "id": 1,
@@ -4064,7 +4259,6 @@
         "content": "1. Arise and shine, thy light is come!\nThe Lord hath made thee free;\nThe chains of darkness bind no more;\nGo forth in liberty!\n\nChorus:\nArise and shine, thy light is come!\nArise, arise and shine!\nWith love's bright adorning,\nShine forth as the morning,\nArise, arise and shine!\n\n2. Arise and shine, thy light is come!\nLet sin and sorrow hide;\nGo forth and show to all the world\nThat light and life abide!\n\n3. Arise and shine, thy light is come!\nThy God thy glory is;\nShow forth the wonders of His love,\nAnd let all praise be His!\n\n4. Arise and shine, thy light is come!\nAnd night shall be no more;\nShine till the glory of the Lord\nls known from shore to shore!",
         "copyright": ""
     },
-	/*
     {
         "id": 450,
         "source": "Front",
@@ -4073,7 +4267,7 @@
         "author": "William T. Pettengell",
         "content": "1.  Jesus is coming! go, herald the tidings\nFar over the land and the sea;\nJesus is coming to gather the ransomed,\nRedeemed by His death on the tree.\nAngels attending, the heavens descending--\u0094\nAll language our joy will transcend,\nWhen we shall see Him, the king in His beauty,\nOur bridegroom, Redeemer, and friend.\n\n2. Lift up your heads and rejoice, O ye righteous,\nYour perfect redemption is nigh;\nSwiftly the darkness of midnight approaches,\nHe cometh shall sound from the sky.\nLong has the battle been waged against evil\nBy suffering saints here below.\nJesus is coming to banish our sorrow,\nAnd lead us where tears never flow.\n\n3. Come, dear Lord Jesus, Thy promise\nfulfilling;\n\"Come quickly!\" our souls cry to Thee:\nLong has the world been enthralled by the\ntempter,\nThe curse is on land and on sea.\nYet Thou shalt triumph, the nations subduing,\nThe truth of the Word cannot fail;\nGod's wondrous glory, like ocean's deep\nbillows,\nTo earth's farthest bounds shall prevail.\nFar over the land and the sea;\nJesus is coming to gather the ransomed,\nRedeemed by His death on the tree.\nAngels attending, the heavens descending\nAll language our joy will transcend,\nWhen we shall see Him, the King in His beauty,\nOur Bridegroom, Redeemer, and Friend.\n\n2. Lift up your heads and rejoice, 0 ye righteous,\nYour perfect redemption is nigh;\nSwiftly the darkness of midnight approaches,\n\"He cometh,\" shall sound from the sky.\nLong has the battle been waged against evil\nBy suffering saints here below.\nJesus is coming to banish our sorrow,\nAnd lead us where tears never flow.\n\n3. Come, dear Lord Jesus, Thy promise fulfilling;\nCome quickly! our souls cry to Thee:\nLong has the world been enthralled by the tempter,\nThe curse is on land and on sea.\nYet Thou shalt triumph, the nations subduing,\nThe truth of the Word cannot fail;\nGod's wondrous glory, like ocean's deep billows,\nTo earth's farthest bounds shall prevail.",
         "copyright": ""
-    },*/
+    },
     {
         "id": 451,
         "source": "Front",
@@ -7838,134 +8032,6 @@
     }];
 
 
-        SongRenderer = function(songs, elem, columnHeight, startingNumber) {
-            this.packedSongs = [];
-            this.songs = songs;
-            this.containerDiv = elem;
-            this.columnHeight = columnHeight;
-			this.startingNumber = startingNumber;
-        }
-        SongRenderer.prototype = {
-
-			pack: function() {
-				if (this.startingNumber < 1) {this.startingNumber = 1;}
-                this.packInternal(this.startingNumber, 0, this.columnHeight);
-            },
-			
-			// private
-			packInternal: function(ordinal, columnCount, currentColumnSize) {
-
-                if(this.songs.length > 0) {
-										
-					for(var i = this.songs.length -1; i >= 0 ; i--) {
-                    //for(var i = this.songs.length -1; i > 0 ; i--) {
-					
-                        var song = this.songs[i];
-						
-						// Just add the first one to a new column
-						// Need to handle songs that are > PAGE_HEIGHT_IN_PIXELS
-                        if(currentColumnSize == this.columnHeight && song.height <= currentColumnSize) {
-							this.addSongToPackedSongs(song, ordinal, columnCount);
-                            this.songs.splice(i, 1);
-                            ordinal++;
-                            currentColumnSize = currentColumnSize - song.height;
-							this.packInternal(ordinal, columnCount, currentColumnSize); // done, start over
-                        }
-						
-						// add the temp fit value based on currentColumnSize
-						for(var j = 0; j < this.songs.length ; j++) {
-							this.songs[j].fit = this.songs[j].height - currentColumnSize;
-						}
-						
-						// sort it descending
-						this.songs = this.sortJSON(this.songs, 'fit');
-
-						for(var j = 0; j < this.songs.length ; j++) {
-							if(this.songs[j].fit <= 0) {
-								var songThatFits = this.songs[j];
-								this.addSongToPackedSongs(songThatFits, ordinal, columnCount);
-								this.songs.splice(j, 1);
-								ordinal++;
-								currentColumnSize = currentColumnSize - songThatFits.height;
-								this.packInternal(ordinal, columnCount, currentColumnSize); // done, start over
-							}
-						}
-
-						// if it got to here that means that there were no songs that fit in the current column
-						this.packedSongs[this.packedSongs.length - 1].lastSongInColumn = true;
-						columnCount++;
-						this.packInternal(ordinal, columnCount, this.columnHeight); // done, start over with fresh column size
-                    }
-                }
-									
-				// this really breaks it for some reason :(					
-				//this.songs = this.packedSongs;
-            },
-			
-			sortJSON: function (data, key){
-				return data.sort(function (a, b, asc) {
-					if (asc) return (a[key] > b[key]) ? 1 : ((a[key] < b[key]) ? -1 : 0);
-					else return (b[key] > a[key]) ? 1 : ((b[key] < a[key]) ? -1 : 0);
-				});
-			},
-			
-			addSongToPackedSongs: function (song, ordinal, columnCount){
-				this.packedSongs.push( { "id": song.id, "title": song.title, "author": song.author, "content": song.content, "height":song.height, "ordinal": ordinal, "columnCount": columnCount } );
-            },
-			
-			addSongHeight : function (){
-				for(var i = 0; i < this.songs.length ; i++) {
-                    this.songs[i].height = this.getSongHeight(this.songs[i]);
-				}
-			},
-			
-            getSongHeight : function(song) {
-                this.containerDiv.html(this.createSongHTML(song));
-                return  this.containerDiv.height();
-            },
-
-            print: function (){
-                var songHTML = "<div class=\"page\"><div class=\"column first\">";
-                for(var i = 0; i < this.packedSongs.length ; i++) {
-                    var song = this.packedSongs[i];
-                    songHTML = songHTML + this.createSongHTML(song);
-                    if(song.lastSongInColumn) {
-                        if(song.columnCount % 2) {
-                            songHTML = songHTML + "</div></div><div class=\"page\"><div class=\"column first\" style=\"page-break-before: always;\">";
-                        }
-                        else {
-                            songHTML = songHTML + "</div><div class=\"column\">";
-                        }
-                    }
-                }
-                songHTML = songHTML.replace(new RegExp('<div class=\"column\">$'), '').replace(new RegExp('<div class=\"column first\">$'), '');
-                this.containerDiv.html(songHTML);
-            },
-    
-            createSongHTML : function(song) {
-                return "<div class=\"song\"><span class=\"number\">"+((song.ordinal != undefined) ? song.ordinal : 0) +"</span><h1>"+song.title+"</h1><h2>"+song.author+"</h2><p>"+song.content.replace(/\n/g,'<br />').replace( /(\d{1}\.{1})/g, '<span>$1</span>' )+"</p></div>";
-            },
-    
-        }
-
-		
-        $(function () {
-		
-			var front = $(masterSongList).filter(function (i,n){return n.source === 'Front'});
-			var numberOfSongsInFront = front.length;
-            var songRendererFront = new SongRenderer(front, $('.songHolderFront'), 792, 1);
-			songRendererFront.addSongHeight();
-			songRendererFront.pack();
-            songRendererFront.print();
-			
-			var back = $(masterSongList).filter(function (i,n){return n.source === 'Back' || n.source === 'Addendum'});
-            var songRendererBack = new SongRenderer(back, $('.songHolderBack'), 792, numberOfSongsInFront + 1);
-			songRendererBack.addSongHeight();
-			songRendererBack.pack();
-            songRendererBack.print();
-        });
-
-
     </script>
 
 
@@ -7974,5 +8040,6 @@
 <body>
     <div class="songHolderFront"></div>
 	<div class="songHolderBack"></div>
+	<div class="songHolderIndex"></div>
 </body>
 </html>
