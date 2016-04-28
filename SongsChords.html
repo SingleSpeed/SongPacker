@@ -173,7 +173,14 @@
 						if(songHeight <= currentHeight || (currentHeight == 0 && songHeight <= pageHeight))
 						{
 							songHTML = songHTML + song.songHTML;
-							currentHeight = currentHeight + songHeight;
+							
+							if (currentHeight == 0) {
+								currentHeight = pageHeight - songHeight;
+							}
+							else{
+								currentHeight = currentHeight - songHeight;
+							}
+							
 							continue;
 						}
 						
@@ -181,7 +188,7 @@
 						if(songHeight > currentHeight)
 						{
 							songHTML = songHTML + "</div><div class=\"page\">" + song.songHTML;
-							currentHeight = songHeight;
+							currentHeight = pageHeight - songHeight;
 							continue;
 						}
 						
@@ -262,6 +269,103 @@
 			
 		});
 
+		
+	var masterSongList_SHORT = [{
+        "id": 273,
+        "source": "Back",
+        "number": 174,
+        "title": "I Will Follow My Lord",
+        "author": "Deuteronomy 13",
+        "content": "I will follow my Lord and fear Him\nObey and keep His commands,\nWorship and listen to Him\nServe and be faithful to my God.",
+        "copyright": "",
+        "height": 91,
+        "ordinal": 446,
+        "columnCount": 87,
+        "songHTML": "<div class=\"song\"><span class=\"number\">446</span><h1>I Will Follow My Lord</h1><h2>Deuteronomy 13</h2><p>I will follow my Lord and fear Him<br></p><p>Obey and keep His commands,<br></p><p>Worship and listen to Him<br></p><p>Serve and be faithful to my God.</p></div>",
+        "lastSongInColumn": true
+    },
+    {
+        "id": 255,
+        "source": "Back",
+        "number": 154,
+        "title": "In Moments Like These",
+        "author": "David Graham",
+        "content": "In moments like these I sing out a song\nI sing out a love song to Jesus.\nIn moments like these I lift up my hands\nI lift up my hands to the Lord.\n\nSinging I love You, Lord.",
+        "copyright": "",
+        "height": 119,
+        "ordinal": 447,
+        "columnCount": 88,
+        "songHTML": "<div class=\"song\"><span class=\"number\">447</span><h1>In Moments Like These</h1><h2>David Graham</h2><p>In moments like these I sing out a song<br></p><p>I sing out a love song to Jesus.<br></p><p>In moments like these I lift up my hands<br></p><p>I lift up my hands to the Lord.<br></p><p><br></p><p>Singing I love You, Lord.</p></div>"
+    },
+    {
+        "id": 285,
+        "source": "Back",
+        "number": 190,
+        "title": "I Will Enter His Gates",
+        "author": "Leona Von Brethorst",
+        "content": "I will enter his gates with thanksgiving in my heart,\nI will enter his courts with praise.\nI will say, \"This is the day that the Lord has made.\"\nI will rejoice, for he has made me glad.\n\nHe has made me glad, he has made me glad.\nI will rejoice, for he has made me glad.\nHe has made me glad, he has made me glad.\nI will rejoice, for he has made me glad.",
+        "copyright": "",
+        "height": 161,
+        "ordinal": 448,
+        "columnCount": 88,
+        "songHTML": "<div class=\"song\"><span class=\"number\">448</span><h1>I Will Enter His Gates</h1><h2>Leona Von Brethorst</h2><p>I will enter his gates with thanksgiving in my heart,<br></p><p>I will enter his courts with praise.<br></p><p>I will say, \"This is the day that the Lord has made.\"<br></p><p>I will rejoice, for he has made me glad.<br></p><p><br></p><p>He has made me glad, he has made me glad.<br></p><p>I will rejoice, for he has made me glad.<br></p><p>He has made me glad, he has made me glad.<br></p><p>I will rejoice, for he has made me glad.</p></div>"
+    },
+    {
+        "id": 361,
+        "source": "Back",
+        "number": 291,
+        "title": "Down At Your Feet",
+        "author": "Lenny Leblanc",
+        "content": "Down at Your feet O Lord,\nIs the most high place.\nIn Your presence Lord,\nI seek Your face, I seek Your face.\n\nThere is no higher calling, no greater honor\nThan to bow and kneel before Your throne.\nI'm amazed at Your glory, embraced by Your mercy,\nO Lord, I live to worship You!",
+        "copyright": "",
+        "height": 161,
+        "ordinal": 449,
+        "columnCount": 88,
+        "songHTML": "<div class=\"song\"><span class=\"number\">449</span><h1>Down At Your Feet</h1><h2>Lenny Leblanc</h2><p>Down at Your feet O Lord,<br></p><p>Is the most high place.<br></p><p>In Your presence Lord,<br></p><p>I seek Your face, I seek Your face.<br></p><p><br></p><p>There is no higher calling, no greater honor<br></p><p>Than to bow and kneel before Your throne.<br></p><p>I'm amazed at Your glory, embraced by Your mercy,<br></p><p>O Lord, I live to worship You!</p></div>"
+    },
+    {
+        "id": 281,
+        "source": "Back",
+        "number": 184,
+        "title": "Change My Heart, Oh God",
+        "author": "Eddie Espinosa ",
+        "content": "Change my heart O God,\nMake it ever true\nChange my heart O God,\nMay I be like You.\n\nYou are the potter\nI am the clay\nMold me and make me\nThis is what I pray.",
+        "copyright": "",
+        "height": 161,
+        "ordinal": 450,
+        "columnCount": 88,
+        "songHTML": "<div class=\"song\"><span class=\"number\">450</span><h1>Change My Heart, Oh God</h1><h2>Eddie Espinosa </h2><p>Change my heart O God,<br></p><p>Make it ever true<br></p><p>Change my heart O God,<br></p><p>May I be like You.<br></p><p><br></p><p>You are the potter<br></p><p>I am the clay<br></p><p>Mold me and make me<br></p><p>This is what I pray.</p></div>"
+    },
+    {
+        "id": 418,
+        "source": "Addendum",
+        "number": 6,
+        "title": "Come, Now Is The Time To Worship",
+        "author": "Brian Doerksen",
+        "content": "Come, now is the time to worship\nCome, now is the time to give your heart\nCome, now is the time to worship\nCome, just as you are before your God, come\n\nOne day every tongue will confess You are God\nOne day every knee will bow,\nStill the greatest pleasure remains for those\nWho gladly choose You now",
+        "copyright": "",
+        "height": 161,
+        "ordinal": 451,
+        "columnCount": 88,
+        "songHTML": "<div class=\"song\"><span class=\"number\">451</span><h1>Come, Now Is The Time To Worship</h1><h2>Brian Doerksen</h2><p>Come, now is the time to worship<br></p><p>Come, now is the time to give your heart<br></p><p>Come, now is the time to worship<br></p><p>Come, just as you are before your God, come<br></p><p><br></p><p>One day every tongue will confess You are God<br></p><p>One day every knee will bow,<br></p><p>Still the greatest pleasure remains for those<br></p><p>Who gladly choose You now</p></div>",
+        "lastSongInColumn": true
+    },
+    {
+        "id": 274,
+        "source": "Back",
+        "number": 175,
+        "title": "Behold What Manner Of Love",
+        "author": "Patricia Van Tine",
+        "content": "Behold what manner of love,\nThe Father has given unto us.\nBehold what manner of love,\nThe Father has given unto us.\n\nThat we should be called the sons of God,\nThat we should be called the sons of God.",
+        "copyright": "",
+        "height": 133,
+        "ordinal": 452,
+        "columnCount": 89,
+        "songHTML": "<div class=\"song\"><span class=\"number\">452</span><h1>Behold What Manner Of Love</h1><h2>Patricia Van Tine</h2><p>Behold what manner of love,<br></p><p>The Father has given unto us.<br></p><p>Behold what manner of love,<br></p><p>The Father has given unto us.<br></p><p><br></p><p>That we should be called the sons of God,<br></p><p>That we should be called the sons of God.</p></div>"
+    }];
+		
+		
+		
 	var masterSongList = [
     {
         "id": 59,
