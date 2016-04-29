@@ -15,13 +15,15 @@
 		.separate { text-align: center; }
 		.separate h1 { margin-top:400px; font: bold 30px helvetica; padding-right: 40px; }
         .pageone p { margin-top:500px; }
-        h1 { font: bold 18px helvetica; margin: 0px 0px 0px 50px; }
-        h2 { font: italic 16px helvetica; margin: 0px 0px 5px 50px; }
-        p { font: 16px helvetica; margin: 20px 0px 0px 50px; text-indent: -10px; padding-left: 10px; }
+        h1 { font: bold 22px helvetica; margin: 0px 0px 0px 50px; }
+        h2 { font: italic 16px helvetica; margin: 0px 0px 30px 50px; }
+        p { font: 14px helvetica; margin: 20px 0px 0px 50px; text-indent: -10px; padding-left: 10px; }
+		.smallersong p { font-size:12px; }
+		p.no-chord { margin-top: 0px; }
         .first { clear: both; }
         .song { margin: 20px 0px 22px 150px; }
 		.song p span { margin-left: -15px; }
-        .number { font: bold 18px helvetica; float: left; }
+        .number { font: bold 22px helvetica; float: left; }
 		.page { page-break-after: always; width: 100%; }
 		/* .page { border-bottom: 1px solid #000; }		JUST FOR DEV*/
 		
@@ -68,68 +70,63 @@
 				},
 				
 				createSongHTML : function(song) {
-					return "<div class=\"song\"><span class=\"number\">"+((song.ordinal != undefined) ? song.ordinal : 0) +"</span><h1>"+song.title+"</h1><h2>"+song.author+"</h2><p>"+song.content.replace(/\n/g,'<br></p><p>').replace( /(\d{1}\.{1})/g, '<span>$1</span>' )+"</p></div>";
+					
+					var html = "<div class=\"song\"><span class=\"number\">"+((song.ordinal != undefined) ? song.ordinal : 0) +"</span><h1>"+song.title+"</h1><h2>"+song.author+"</h2><p>"+song.content.replace(/\n/g,'<br></p><p>').replace( /(\d{1}\.{1})/g, '<span>$1</span>' )+"</p></div>";
+					
+					var arr = html.split('2.');
+					
+					
+					
+					if (arr.length > 1) {
+
+						var pos = arr[0].lastIndexOf('<p>');
+						str = arr[0].substring(0,pos) + '<p class="no-chord">' + arr[0].substring(pos+3)
+						
+						return str + "2." + arr[1].replace(/<p>/g, '<p class="no-chord">');
+					}
+					else {
+						return html;
+					}
+					
+					
+					
+					
 				},
 				
-				pack: function() {
-					// before we can pack we need the song height
-					this.addSongHeight();
-					this._packInternal(this.options.startingNumber, 0, this.options.columnHeight);
+				createSongHTMLsmaller : function(song) {
+					
+					var html = "<div class=\"song smallersong\"><span class=\"number\">"+((song.ordinal != undefined) ? song.ordinal : 0) +"</span><h1>"+song.title+"</h1><h2>"+song.author+"</h2><p>"+song.content.replace(/\n/g,'<br></p><p>').replace( /(\d{1}\.{1})/g, '<span>$1</span>' )+"</p></div>";
+					
+					var arr = html.split('2.');
+					
+					
+					
+					if (arr.length > 1) {
+
+						var pos = arr[0].lastIndexOf('<p>');
+						str = arr[0].substring(0,pos) + '<p class="no-chord">' + arr[0].substring(pos+3)
+						
+						return str + "2." + arr[1].replace(/<p>/g, '<p class="no-chord">');
+					}
+					else {
+						return html;
+					}
+					
+					
+					
+					
+				},
+				
+				createSongHTMLNoSpace : function(song) {
+					var html = "<div class=\"song\"><span class=\"number\">"+((song.ordinal != undefined) ? song.ordinal : 0) +"</span><h1>"+song.title+"</h1><h2>"+song.author+"</h2><p>"+song.content.replace(/\n/g,'<br></p><p>').replace( /(\d{1}\.{1})/g, '<span>$1</span>' )+"</p></div>";
+					
+					return html.replace(/<p>/g, '<p class="no-chord">');				
 				},
 				
 				_randomInt: function(min, max) {
 					return Math.floor(Math.random() * (max - min + 1)) + min;
 				},
 				
-				_packInternal: function(ordinal, columnCount, currentColumnSize) {
-
-					if(this.options.songs.length > 0) {
-											
-						for(var i = this.options.songs.length -1; i >= 0 ; i--) {
-						
-							// to break up the format I will just randomly grab a song
-							var randomNumber = this._randomInt(0, this.options.songs.length-1);
-							var song = this.options.songs[randomNumber];
-							
-							if(song != null && (song.height > this.options.columnHeight)) {
-								console.log("Song doesn't fit: " + song.id);
-								this.options.songs.splice(randomNumber, 1);
-								this._packInternal(ordinal, columnCount, currentColumnSize);
-							}
-							
-							if(currentColumnSize == this.options.columnHeight && song.height <= currentColumnSize) {
-								song.ordinal = ordinal;
-								this.addSongToPackedSongs(song, columnCount);
-								this.options.songs.splice(randomNumber, 1);
-								ordinal++;
-								currentColumnSize = currentColumnSize - song.height;
-								this._packInternal(ordinal, columnCount, currentColumnSize);
-							}
-							
-							for(var j = 0; j < this.options.songs.length ; j++) {
-								this.options.songs[j].fit = this.options.songs[j].height - currentColumnSize;
-							}
-							
-							this.options.songs = this.sortJSON(this.options.songs, 'fit', 'desc');
-
-							for(var j = 0; j < this.options.songs.length ; j++) {
-								if(this.options.songs[j].fit <= 0) {
-									var songThatFits = this.options.songs[j];
-									songThatFits.ordinal = ordinal;
-									this.addSongToPackedSongs(songThatFits, columnCount);
-									this.options.songs.splice(j, 1);
-									ordinal++;
-									currentColumnSize = currentColumnSize - songThatFits.height;
-									this._packInternal(ordinal, columnCount, currentColumnSize); 
-								}
-							}
-
-							this.options.packedSongs[this.options.packedSongs.length - 1].lastSongInColumn = true;
-							columnCount++;
-							this._packInternal(ordinal, columnCount, this.options.columnHeight);
-						}
-					}
-				},
 				
 				sortJSON: function (data, key, dir){
 					return data.sort(function (a, b) {
@@ -152,6 +149,7 @@
 					{
 						var song = this.options.packedSongs[i];
 						var songHeight = this.getSongHeight(song);
+						song.songHTML = this.createSongHTML(song);
 						
 						// if currentHeight = 0 and song is greater than songHeight add it and start a new page
 						/*if(currentHeight == 0 && songHeight > pageHeight)
@@ -162,9 +160,10 @@
 						}*/
 						
 						// if songheight is ever greater than pageHeight then put on it's own page
+						// and remove the spaces for chords
 						if(songHeight > pageHeight)
 						{
-							songHTML = songHTML + "</div><div class=\"page\">" + song.songHTML + "</div><div class=\"page\">";
+							songHTML = songHTML + "</div><div class=\"page\">" + this.createSongHTMLsmaller(song) + "</div><div class=\"page\">";
 							currentHeight = 0;
 							continue;
 						}
@@ -206,45 +205,7 @@
 					this.options.containerDiv.html(songHTML);*/
 				},
 				
-				createIndex: function (){
-					this.options.packedSongs = this.sortJSON(this.options.packedSongs, 'title', 'asc');
-					this.options.containerDiv.html("<ul><li><span>"+this.options.packedSongs[0].title+"</span><span>"+this.options.packedSongs.ordinal+"</span></li></ul>");
-					var heightOfOneIndex = this.options.containerDiv.height();
-					var numberPerColumn = this.options.columnHeight / heightOfOneIndex;
-					var numberPerColumn = 58;
-					var indexHTML = "<div class=\"page\"><div class=\"column first\"><ul class=\"index\">";
-					var indexColumnCount = 0;
-					
-					var currentLetterGroup = "";
-					var lineCountWithHeader = 0;
-					
-					for(var k = 0; k < this.options.packedSongs.length ; k++) {
-						var song = this.options.packedSongs[k];
-						
-						var currentLetter = song.title.charAt(0);
-						
-						if(currentLetterGroup != currentLetter){
-							currentLetterGroup = currentLetter;
-							indexHTML = indexHTML + "<li class=\"indextitle\">"+currentLetterGroup+"</li>";
-							lineCountWithHeader++;
-						}
-						
-						indexHTML = indexHTML + "<li><span>"+song.title.substring(0, 45)+"</span><span>"+song.ordinal+"</span></li>";
-						if((lineCountWithHeader) % numberPerColumn == 0) { 
-							if(indexColumnCount % 2) {
-								indexHTML = indexHTML + "</ul></div></div><div class=\"page\"><div class=\"column first\"><ul class=\"index\">"; 
-							}
-							else {
-								indexHTML = indexHTML + "</ul></div><div class=\"column\"><ul class=\"index\">"; 
-							}
-							indexColumnCount++;
-						}
-						lineCountWithHeader++;
-					}
-					
-					indexHTML = indexHTML + "</ul></div></div>";
-					this.options.containerDiv.html(indexHTML);
-				},
+				
 				
 			});	
 		})(jQuery);
@@ -252,6 +213,8 @@
 	
 	
 		$(function () {
+			
+
 			
 			var frontLength = masterSongList.length;
 			
@@ -269,6 +232,21 @@
 			
 		});
 
+		
+		var masterSongList_ONE = [{
+        "id": 59,
+        "source": "Front",
+        "number": 143,
+        "title": "Jesus, The Very Thought Of Thee",
+        "author": "Bernard of Clairvaux (Tr. Edward Caswall)",
+        "content": "1. Jesus, the very thought of Thee\nWith sweetness fills my breast;\nBut sweeter far thy face to see\nAnd in thy presence rest.\n\n2. Nor voice can sing, nor heart can frame,\nNor can the mem'ry find\nA sweeter sound than thy blest name,\nO Savior of mankind!\n\n3. O hope of ev'ry contrite heart,\nO joy of all the meek,\nTo those who fall, how kind thou art!\nHow good to those who seek!\n\n4. Jesus, our only joy be thou,\nAs thou our prize wilt be;\nJesus, be thou our glory now,\nAnd thro' eternity.",
+        "copyright": "",
+        "height": 301,
+        "ordinal": 1,
+        "columnCount": 0,
+        "songHTML": "<div class=\"song\"><span class=\"number\">1</span><h1>Jesus, The Very Thought Of Thee</h1><h2>Bernard of Clairvaux (Tr. Edward Caswall)</h2><p><span>1.</span> Jesus, the very thought of Thee<br></p><p>With sweetness fills my breast;<br></p><p>But sweeter far thy face to see<br></p><p>And in thy presence rest.<br></p><p><br></p><p><span>2.</span> Nor voice can sing, nor heart can frame,<br></p><p>Nor can the mem'ry find<br></p><p>A sweeter sound than thy blest name,<br></p><p>O Savior of mankind!<br></p><p><br></p><p><span>3.</span> O hope of ev'ry contrite heart,<br></p><p>O joy of all the meek,<br></p><p>To those who fall, how kind thou art!<br></p><p>How good to those who seek!<br></p><p><br></p><p><span>4.</span> Jesus, our only joy be thou,<br></p><p>As thou our prize wilt be;<br></p><p>Jesus, be thou our glory now,<br></p><p>And thro' eternity.</p></div>"
+    }];
+		
 		
 	var masterSongList_SHORT = [{
         "id": 273,
