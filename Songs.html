@@ -21,17 +21,18 @@
 		.song p span { margin-left: -15px; }
         .number { font: bold 14px helvetica; float: left; }
 		.page { content: ""; display: table; clear: both; page-break-after: always; width: 670px; margin-top:80px; }
-		.songHolderIndex .page { margin-top: 100px; }
 		/*.page { border-bottom: 1px solid #000; }		JUST FOR DEV*/
 		
 		ul.index { max-width: 40em; padding: 0; overflow-x: hidden; list-style: none; }
 		ul.index li { font: 12px helvetica; }
 		ul.index li:before { float: left; width: 0; white-space: nowrap; content: ". . . . . . . . . . . . . . . . . . . . " ". . . . . . . . . . . . . . . . . . . . " ". . . . . . . . . ."; }
+		ul.index li.firstincolumn:before { float: left; width: 0; white-space: nowrap; content: " "; }/*added this for weird printing issues*/
 		li.indextitle:first-child { margin-top:0px!important; }
 		li.indextitle:before { content: ""!important; }
 		li.indextitle { font-weight: bold!important; margin-top: 10px; }
 		ul.index span:first-child { padding-right: 0.33em;  background: white}
 		ul.index span + span { float: right; padding-left: 0.33em; background: white}
+		.firstincolumn { color:#fff; } /*added this for weird printing issues*/
     </style>
 
 	
@@ -165,7 +166,7 @@
 					var heightOfOneIndex = this.options.containerDiv.height();
 					var numberPerColumn = this.options.columnHeight / heightOfOneIndex;
 					var numberPerColumn = 54;
-					var indexHTML = "<div class=\"page\"><div class=\"column first\"><ul class=\"index\">";
+					var indexHTML = "<div class=\"page\"><div class=\"column first\"><ul class=\"index\"><li class=\"firstincolumn\">&nbsp;</li>";
 					var indexColumnCount = 0;
 					
 					var currentLetterGroup = "";
@@ -185,10 +186,10 @@
 						indexHTML = indexHTML + "<li><span>"+song.title.substring(0, 45)+"</span><span>"+song.ordinal+"</span></li>";
 						if((lineCountWithHeader) % numberPerColumn == 0) { 
 							if(indexColumnCount % 2) {
-								indexHTML = indexHTML + "</ul></div></div><div class=\"page\"><div class=\"column first\"><ul class=\"index\">"; 
+								indexHTML = indexHTML + "</ul></div></div><div class=\"page\"><div class=\"column first\"><ul class=\"index\"><li class=\"firstincolumn\">&nbsp;</li>"; 
 							}
 							else {
-								indexHTML = indexHTML + "</ul></div><div class=\"column\"><ul class=\"index\">"; 
+								indexHTML = indexHTML + "</ul></div><div class=\"column\"><ul class=\"index\"><li class=\"firstincolumn\">&nbsp;</li>"; 
 							}
 							indexColumnCount++;
 						}
@@ -2658,7 +2659,7 @@
         "number": 8,
         "title": "Famous One",
         "author": "Jesse Reeves, Chris Tomlin",
-        "content": "And for all You've done and yet to do\nWith every breath I'm praising You\nDesire of nations and every heart\nYou alone are God, You alone are God\n\nChorus:\nYou are the Lord, the famous One, famous One\nGreat is Your name in all the earth\nThe heavens declare You're glorious, glorious\nGreat is Your fame beyond the earth\n\nThe Morning Star is shining through\nAnd every eye is watching You\nRevealing by nature and miracles\nYou are beautiful, You are beautiful\n\n",
+        "content": "And for all You've done and yet to do\nWith every breath I'm praising You\nDesire of nations and every heart\nYou alone are God, You alone are God\n\nChorus:\nYou are the Lord, the famous One, famous One\nGreat is Your name in all the earth\nThe heavens declare You're glorious, glorious\nGreat is Your fame beyond the earth\n\nThe Morning Star is shining through\nAnd every eye is watching You\nRevealing by nature and miracles\nYou are beautiful, You are beautiful",
         "copyright": "",
         "height": 259,
         "ordinal": 186,
@@ -3269,7 +3270,7 @@
         "number": 179,
         "title": "Praise The Lord",
         "author": "Herb Brendlin, Tommy Coomes, Fred Field, Chuck Girard, Jay Truax",
-        "content": "1. Praise the Lord,\nPraise the Lord, \nPraise to Jesus Christ,\nFrom whom all blessings flow.\nPraise the Lord,\nPraise the Lord,\nPraise to Jesus Christ,\nFrom whom all blessings flow.\n\nChorus:\nLet's open up our hearts,\nLet the living waters give our lives a start.\nLet's open up our hearts,\nLet the living waters give our lives a start.\n\n2. Praise His name\nPraise His name\nPraise His name\nAnd you will never be the same.\nPraise His name,\nPraise His name,\nPraise His name,\nAnd you will never be the same.\n\n\n\n\n",
+        "content": "1. Praise the Lord,\nPraise the Lord, \nPraise to Jesus Christ,\nFrom whom all blessings flow.\nPraise the Lord,\nPraise the Lord,\nPraise to Jesus Christ,\nFrom whom all blessings flow.\n\nChorus:\nLet's open up our hearts,\nLet the living waters give our lives a start.\nLet's open up our hearts,\nLet the living waters give our lives a start.\n\n2. Praise His name\nPraise His name\nPraise His name\nAnd you will never be the same.\nPraise His name,\nPraise His name,\nPraise His name,\nAnd you will never be the same.",
         "copyright": "",
         "height": 455,
         "ordinal": 234,
@@ -3490,7 +3491,7 @@
         "number": 7,
         "title": "Strength Of My Life",
         "author": "Leslie Phillips",
-        "content": "Every day I look to You, \nTo be the strength of my life;\nYou're the One I hold on to,\nTo be the strength of my life\n\nBe the strength of my life, \nStrength of my life,\nBe the strength of my life today\nBe the strength of my life,\nStrength of my life,\nBe the strength of my life today\n\n",
+        "content": "Every day I look to You, \nTo be the strength of my life;\nYou're the One I hold on to,\nTo be the strength of my life\n\nBe the strength of my life, \nStrength of my life,\nBe the strength of my life today\nBe the strength of my life,\nStrength of my life,\nBe the strength of my life today",
         "copyright": "",
         "height": 175,
         "ordinal": 252,
@@ -3958,7 +3959,7 @@
         "number": 191,
         "title": "You Are The Vine",
         "author": "Danny Daniels",
-        "content": "You are the vine, we are the branches\nKeep us abiding in You.\nYou are the vine, we are the branches\nKeep us abiding in You.\n\nAnd we'll go (echo)\nIn your love (echo)\nAnd we'll go (echo)\nIn your name (echo)\nAnd the world (echo)\nWill surely know (echo)\nYou have the power to heal and to save\n\n",
+        "content": "You are the vine, we are the branches\nKeep us abiding in You.\nYou are the vine, we are the branches\nKeep us abiding in You.\n\nAnd we'll go (echo)\nIn your love (echo)\nAnd we'll go (echo)\nIn your name (echo)\nAnd the world (echo)\nWill surely know (echo)\nYou have the power to heal and to save",
         "copyright": "",
         "height": 329,
         "ordinal": 288,
@@ -4101,7 +4102,7 @@
         "number": 327,
         "title": "My Life Is In You, Lord",
         "author": "Daniel Gardner",
-        "content": "My life is in you, Lord;\nMy strength is in you, Lord;\nMy hope is in you, Lord;\nIn you, it's in you.\n(Repeat)\n\nI will praise You with all of my life,\nI will praise You with all of my strength;\nWith all of my life, with all of my strength.\nAll of my hope is in You.\n\n",
+        "content": "My life is in you, Lord;\nMy strength is in you, Lord;\nMy hope is in you, Lord;\nIn you, it's in you.\n(Repeat)\n\nI will praise You with all of my life,\nI will praise You with all of my strength;\nWith all of my life, with all of my strength.\nAll of my hope is in You.",
         "copyright": "",
         "height": 231,
         "ordinal": 300,
@@ -4179,7 +4180,7 @@
         "number": 141,
         "title": "I Bless You, Lord",
         "author": "",
-        "content": "1. I bless You, Lord; I bless You, Lord\nI kneel down before You. \nI bless You, Lord; I bless You, Lord\nI kneel down before You.\n\nChorus:\nWith all of my heart, with all of my mind,\nWith all that is within me.\nI offer up ... a sacrifice of praise.\n\n2. I thank You, Lord, I thank You, Lord\nI lift my hands to You.\nI thank You, Lord, I thank You, Lord\nI lift my hands to You.\n\n3. I worship You, I worship You\nI fall down before You.\nI worship You, I worship You\nI fall down before You.\n\n",
+        "content": "1. I bless You, Lord; I bless You, Lord\nI kneel down before You. \nI bless You, Lord; I bless You, Lord\nI kneel down before You.\n\nChorus:\nWith all of my heart, with all of my mind,\nWith all that is within me.\nI offer up ... a sacrifice of praise.\n\n2. I thank You, Lord, I thank You, Lord\nI lift my hands to You.\nI thank You, Lord, I thank You, Lord\nI lift my hands to You.\n\n3. I worship You, I worship You\nI fall down before You.\nI worship You, I worship You\nI fall down before You.",
         "copyright": "",
         "height": 287,
         "ordinal": 306,
@@ -4309,7 +4310,7 @@
         "number": 281,
         "title": "Rock Of My Salvation",
         "author": "Teresa Muller",
-        "content": "You are the rock of my salvation,\nYou are the strength of my life,\nYou are my hope and my inspiration,\nLord unto You will I cry.\n\nI believe in You, believe in You,\nFor Your faithful love to me,\nYou have been my help in time of need,\nLord, unto You will I cleave.\n\n\n",
+        "content": "You are the rock of my salvation,\nYou are the strength of my life,\nYou are my hope and my inspiration,\nLord unto You will I cry.\n\nI believe in You, believe in You,\nFor Your faithful love to me,\nYou have been my help in time of need,\nLord, unto You will I cleave.",
         "copyright": "",
         "height": 329,
         "ordinal": 317,
@@ -4829,7 +4830,7 @@
         "number": 134,
         "title": "Humble Thyself",
         "author": "Bob Hudson",
-        "content": "Humble thyself in the sight of the Lord (echo)\nHumble thyself in the sight of the Lord (echo)\n\nAnd He (And He) shall lift (shall lift) you up\nHigher and higher. \nAnd He (And He) shall lift (shall lift) you up\n\nHumble thyself in the sight of the Lord (echo)\nHumble thyself in the sight of the Lord (echo)\n\nAnd He (And He) shall lift (shall lift) you up \nHigher and higher\nAnd He (And He) shall lift (shall lift) you up\nUp into heaven\nAnd He (And He) shall lift (shall lift) you up \n\n",
+        "content": "Humble thyself in the sight of the Lord (echo)\nHumble thyself in the sight of the Lord (echo)\n\nAnd He (And He) shall lift (shall lift) you up\nHigher and higher. \nAnd He (And He) shall lift (shall lift) you up\n\nHumble thyself in the sight of the Lord (echo)\nHumble thyself in the sight of the Lord (echo)\n\nAnd He (And He) shall lift (shall lift) you up \nHigher and higher\nAnd He (And He) shall lift (shall lift) you up\nUp into heaven\nAnd He (And He) shall lift (shall lift) you up ",
         "copyright": "",
         "height": 259,
         "ordinal": 357,
@@ -4972,7 +4973,7 @@
         "number": 253,
         "title": "I Worship You, My Lord",
         "author": "Marc Nelson",
-        "content": "1. I have found a joy in my salvation,\nSince I gave my heart to You.\nI have found the reason I'm living,\nSo in love, so near to You.\n\nChorus:\nI worship You, my Lord\nAll my life, I praise Your name,\nI worship, I worship You, my Lord.\n\n2. Oh, my Lord, my life I am giving,\nA living sacrifice to You.\nOh, my Lord, the reason I'm living,\nIs to serve and worship You.\n\n\n\n",
+        "content": "1. I have found a joy in my salvation,\nSince I gave my heart to You.\nI have found the reason I'm living,\nSo in love, so near to You.\n\nChorus:\nI worship You, my Lord\nAll my life, I praise Your name,\nI worship, I worship You, my Lord.\n\n2. Oh, my Lord, my life I am giving,\nA living sacrifice to You.\nOh, my Lord, the reason I'm living,\nIs to serve and worship You.",
         "copyright": "",
         "height": 273,
         "ordinal": 368,
@@ -5102,7 +5103,7 @@
         "number": 126,
         "title": "Give Me Faith",
         "author": "",
-        "content": "1. Give me faith enough to see me through\nShow me Lord, I can depend on You,\nTake my life and wash away my sin\nThen renew my soul once again.\n\n1. Give me hope, enough to look to You\nShow me Lord, that I can trust in You,\nSend your joy and fill me to the brim\nThen renew my love once again.\n\n",
+        "content": "1. Give me faith enough to see me through\nShow me Lord, I can depend on You,\nTake my life and wash away my sin\nThen renew my soul once again.\n\n1. Give me hope, enough to look to You\nShow me Lord, that I can trust in You,\nSend your joy and fill me to the brim\nThen renew my love once again.",
         "copyright": "",
         "height": 287,
         "ordinal": 378,
@@ -6258,15 +6259,15 @@
     <div class="songHolderFront"></div>
 	<div class="separate page"><h1>Choruses</h1></div>
 	<div class="songHolderBack"></div>
-	<!-- <div class="page">&nbsp;</div>
 	<div class="page">&nbsp;</div>
 	<div class="page">&nbsp;</div>
 	<div class="page">&nbsp;</div>
 	<div class="page">&nbsp;</div>
 	<div class="page">&nbsp;</div>
 	<div class="page">&nbsp;</div>
-	<div class="page">&nbsp;</div> -->
-	<!-- <div class="separate page"><h1>Index</h1></div> -->
+	<div class="page">&nbsp;</div>
+	<div class="page">&nbsp;</div>
+	<div class="separate page"><h1>Index</h1></div>
 	<div class="songHolderIndex"></div>
 
 	
