@@ -29,7 +29,7 @@ p { font: 4vw helvetica; margin: 0px 0px 0px 1.6em; text-indent: -1em; padding-l
 		  <input name="songs" id="songs" type="text" placeholder="search for a song" ng-model="selectedSong" typeahead="x as x.ordinal +' - '+x.title for x in songs | filter:$viewValue | limitTo:12" class="form-control input-lg">
 		  <span id="searchclear" class="glyphicon glyphicon-remove-circle" ng-click="clearSearch()"></span>
 		</div>
-		<div ng-bind-html="selectedSong.songHTML"></div>
+		<div ng-bind-html="selectedSong.songHTML" class="song-html"></div>
 	</div>
 
     
@@ -6261,6 +6261,8 @@ p { font: 4vw helvetica; margin: 0px 0px 0px 1.6em; text-indent: -1em; padding-l
 			
 			$scope.clearSearch = function(){
 				document.getElementById("songs").value = "";
+				document.getElementsByClassName("song-html")[0].innerHTML = "";
+				document.getElementById("songs").focus();
 			};
 			
 		});
