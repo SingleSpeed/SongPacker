@@ -1,0 +1,22 @@
+body {  margin: 1em; }
+
+.dark-mode, .dark-mode .catalog ul, .dark-mode .catalog li, .dark-mode .catalog .results li a { background-color:#1e1e1e; color: #fff; }
+.dark-mode input, .dark-mode ul, .dark-mode li, .dark-mode a, .dark-mode .dropdown-menu>li>a, 
+ .dark-mode .catalog .pagination li span { background-color:#353535; color: #fff; }
+
+.songsearch h1 { font: bold 6vw helvetica; margin: 0px 0px 0px 2em; }
+.songsearch h2 { font: italic 3vw helvetica; margin: 0px 0px 1em 1em; }
+.songsearch p { font: 4vw helvetica; margin: 0px 0px 0px 1.6em; text-indent: -1em; padding-left: 1em; }
+.songsearch .song { margin-bottom: 2em; }
+.songsearch .song p span { margin-left: -1.2em; }
+.songsearch .number { font: bold 6vw helvetica; float: left; }
+.songsearch #searchclear { position: absolute; right: 1.3em; top: .84em; font-size: 2em; cursor: pointer; color: #ccc; }
+
+.catalog .container { display: flex; justify-content: center; }
+.catalog .pagination li span { font: 4vw helvetica; color:#000; }
+.catalog .results { list-style-type: none; }
+.catalog .results li {  font: 4vw helvetica; margin-left:-15px; margin-bottom: 10px; }
+.catalog .results li a {  color: #000; }
+
+.navigation { margin-top:30px; }
+.navigation .lightordark { margin-left:10px; }

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html >
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>songbook index</title>
+<link rel="stylesheet" href="css/normalize.css">
+<link rel="stylesheet prefetch" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/styles.css">
+<script src="js/angular.min.js"></script>
+<script src="js/angular-sanitize.min.js"></script>
+<script src="js/ui-bootstrap-tpls-0.12.0.js"></script>
+<script src="js/songlist.js"></script>
+<script src="js/scripts.js"></script>
+</head>
+<body>
+    <div class="container-fluid catalog">
+        <div class="text-center">
+            <a class="btn btn-default" href="index.html">Search</a>
+        </div>
+        <div data-ng-app="Napp" ng-controller="GetAlphabetical as ga">
+            <div class="container">
+                <nav> 
+                <ul class="pagination"> 
+                <li ng-repeat="letter in names"><span ng-click="setFilter(letter)">{{letter}}</span></li>
+                </ul> 
+                </nav>
+            </div>
+            <br />
+            <ul class="results">
+                <li ng-repeat="cust in Customer | filter:startsWith | orderBy: 'title'" ><a href="index.html?s={{cust.ordinal}}">{{cust.title}} ({{cust.ordinal}})</a></li>
+            </ul>
+        </div>
+        <div class="navigation">
+            <div class="container-fluid text-center">
+                <a class="btn btn-default" href="index.html">Search</a>
+                <a class="btn btn-default" id="lightordark" onclick="turnToTheDarkSide()">Theme</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+    var app = angular.module('Napp', []);
+
+    app.controller('GetAlphabetical', function($scope) {
+          $scope.filt = 'All';
+          $scope.setFilter = function(letter) {
+            $scope.filt = letter;
+        };
+
+        $scope.names = ['All', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'V', 'W', 'Y'];
+
+        $scope.startsWith = function(customer) {
+            var lowerStr = (customer.title + "").toLowerCase();
+            var letter = $scope.filt;
+            if (letter === 'All') return true;
+            return lowerStr.indexOf(letter.toLowerCase()) === 0;
+        }
+
+        $scope.Customer = masterSongList;
+    });
+    
+    // On page load set the theme.
+    (function() {
+      var theme = getThemeClassFromCookie();
+      var element = document.body;
+      element.classList.add(theme);
+      if (theme && theme === "dark-mode") {
+        document.getElementById("lightordark").innerHTML = "Light theme";
+      } else {
+        document.getElementById("lightordark").innerHTML = "Dark theme";
+      }
+    })();
+    </script>
+
+</body>
+</html>
